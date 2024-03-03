@@ -23,7 +23,8 @@ obj-m	:= scull.o
 
 else
 
-KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+# KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+KERNELDIR ?= $(shell if [ -n "$$BR2_EXTERNAL" ]; then echo "$$BR2_EXTERNAL/output/build/linux-$(LINUX_VERSION)"; else echo "$(PWD)/../linux-$(LINUX_VERSION)"; fi)
 PWD       := $(shell pwd)
 
 modules:
