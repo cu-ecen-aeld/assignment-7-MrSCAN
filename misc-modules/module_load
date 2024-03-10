@@ -21,8 +21,22 @@ else
     group="wheel"
 fi
 
+# Get the kernel version from /proc/version
+kernel_version=$(uname -r)
+
+# Assuming the modules are in /lib/modules/<kernel_version>/extra/
+module_directory="/lib/modules/$kernel_version/extra"
+
+if [ ! -d "$module_directory" ]; then
+    echo "Module directory not found: $module_directory"
+    exit 1
+fi
+
 echo "Load our module, exit on failure"
-insmod ./$module.ko $* || exit 1
+insmod "$module_directory/$module.ko" $* || exit 1
+
+# echo "Load our module, exit on failure"
+# insmod ./$module.ko $* || exit 1
 echo "Get the major number (allocated with allocate_chrdev_region) from /proc/devices"
 major=$(awk "\$2==\"$module\" {print \$1}" /proc/devices)
 if [ ! -z ${major} ]; then
